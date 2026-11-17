@@ -10,11 +10,11 @@ export const meta = {
 };
 
 export const META_COSTS = {
-  hp: [120, 300, 650],
-  dmg: [100, 220, 450, 800, 1300],
-  drone: [400, 1200],
-  coin: [150, 400, 900],
-  reroll: [250, 700],
+  hp: [250, 600, 1300],
+  dmg: [200, 450, 900, 1600, 2600],
+  drone: [800, 2400],
+  coin: [300, 800, 1800],
+  reroll: [500, 1400],
 };
 
 export async function loadMeta() {

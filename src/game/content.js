@@ -40,15 +40,15 @@ export const ENEMIES = {
 
 // Fases: [segundo em que começa a aparecer, monstro, peso]
 export const STAGES = [
-  { id: 1, theme: 'ruins', duration: 150, hpMul: 1, spawn: [1.15, 0.27], bpm: 112, boss: 'queen',
+  { id: 1, theme: 'ruins', duration: 150, hpMul: 1.25, spawn: [1.15, 0.27], bpm: 112, boss: 'queen',
     mobs: [[0, 'spider', 6], [0, 'mite', 4], [20, 'bat', 4], [50, 'bomber', 1.5], [70, 'brute', 1.5]], hordes: ['mite', 'bat'] },
-  { id: 2, theme: 'sewer', duration: 150, hpMul: 1.5, spawn: [1.0, 0.24], bpm: 118, boss: 'toad',
+  { id: 2, theme: 'sewer', duration: 150, hpMul: 2.0, spawn: [1.0, 0.24], bpm: 118, boss: 'toad',
     mobs: [[0, 'slime', 4], [0, 'spider', 3], [0, 'mite', 2], [20, 'spitter', 3], [45, 'rat', 3], [90, 'brute', 1.5]], hordes: ['slimelet', 'mite'] },
-  { id: 3, theme: 'junk', duration: 160, hpMul: 2.1, spawn: [1.05, 0.23], bpm: 124, boss: 'golem',
+  { id: 3, theme: 'junk', duration: 160, hpMul: 2.8, spawn: [1.05, 0.23], bpm: 124, boss: 'golem',
     mobs: [[0, 'rat', 4], [0, 'crab', 3], [0, 'wasp', 3], [25, 'bomber', 3], [50, 'spitter', 2], [80, 'brute', 2]], hordes: ['wasp', 'rat'] },
-  { id: 4, theme: 'toxic', duration: 160, hpMul: 2.8, spawn: [1.0, 0.21], bpm: 128, boss: 'mother',
+  { id: 4, theme: 'toxic', duration: 160, hpMul: 3.7, spawn: [1.0, 0.21], bpm: 128, boss: 'mother',
     mobs: [[0, 'slime', 4], [0, 'wasp', 4], [15, 'moth', 1.5], [30, 'ghost', 3], [55, 'spitter', 3], [85, 'crab', 2]], hordes: ['wasp', 'slimelet'] },
-  { id: 5, theme: 'lab', duration: 170, hpMul: 3.6, spawn: [0.95, 0.19], bpm: 134, boss: 'mutant',
+  { id: 5, theme: 'lab', duration: 170, hpMul: 4.8, spawn: [0.95, 0.19], bpm: 134, boss: 'mutant',
     mobs: [[0, 'spider', 3], [0, 'crab', 3], [0, 'bomber', 2], [0, 'wasp', 2], [15, 'ghost', 3], [30, 'rat', 3], [45, 'moth', 1.5], [60, 'spitter', 3], [90, 'brute', 2.5]],
     hordes: ['bomber', 'wasp', 'mite'] },
 ];

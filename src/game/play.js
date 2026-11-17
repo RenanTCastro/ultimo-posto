@@ -108,7 +108,8 @@ export class PlayScene {
     const tm = this.time;
     if (this.endless) return 1 + tm / 60 + (tm / 150) ** 2;
     const k = Math.min(1, tm / this.stage.duration);
-    return 1 + (this.stage.hpMul - 1) * k + tm / 150; // fase começa leve e endurece até o chefe
+    const start = 1 + (this.stage.hpMul - 1) * 0.35; // fases avançadas já começam mais fortes
+    return start + (this.stage.hpMul - start) * k + tm / 150; // e endurecem até o chefe
   }
 
   spawn(dt) {
