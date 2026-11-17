@@ -551,6 +551,7 @@ export class PlayScene {
         const d = Math.hypot(e.x - this.cx, e.y - this.cy);
         if (d < rad + e.r) {
           r.hit.add(e);
+          if (r.spareBoss && e.T.boss) { e.kx += (e.x - this.cx) / d * 260; e.ky += (e.y - this.cy) / d * 260; continue; }
           this.pulseKill = true; // inclui explosões em cadeia causadas pelo pulso
           this.damage(e, r.dmg, (e.x - this.cx) / d * 4, (e.y - this.cy) / d * 4, false, true);
           this.pulseKill = false;
@@ -708,9 +709,9 @@ export class PlayScene {
     stopMusic();
     const ok = await Ads.showRewarded();
     if (!ok) { this.say(t('noad'), UI.accent); startMusic(this.stage.bpm); return; }
-    this.revived = true; this.hp = this.maxHp; this.iframes = 2.5; this.state = 'play';
+    this.revived = true; this.hp = Math.ceil(this.maxHp / 2); this.iframes = 2.5; this.state = 'play'; // volta com metade da vida
     this.eshots = [];
-    this.rings.push({ t: 0, max: 140, dmg: 999, hit: new Set() });
+    this.rings.push({ t: 0, max: 140, dmg: 8 + this.level * 1.5, hit: new Set(), spareBoss: true }); // força de pulso normal, só empurra o chefe
     this.makeHudButtons(); sfx.pulse(); startMusic(this.stage.bpm);
   }
 
