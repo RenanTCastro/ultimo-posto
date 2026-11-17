@@ -8,7 +8,7 @@ import * as Ads from '../engine/ads.js';
 import { buildFloor, splat, makeCanvas, PAL } from './art.js';
 import { t, RUN_UPGRADES, EVO_TEXT, STAGE_TEXT, BOSS_TEXT, SHORT } from './strings.js';
 import { meta, saveMeta } from './meta.js';
-import { ENEMIES, STAGES, ENDLESS, UPGRADES, EVOLUTIONS, HP_MUL, BASE_DMG, XP_MUL } from './content.js';
+import { ENEMIES, STAGES, ENDLESS, UPGRADES, EVOLUTIONS, HP_MUL, BASE_DMG, XP_MUL, SCRAP_MUL } from './content.js';
 import { ART, MenuScene, StageScene } from './scenes.js';
 
 const TOP = 30, BOTTOM_H = 38;
@@ -661,7 +661,7 @@ export class PlayScene {
   // ================= Fim de partida =================
   rewards() {
     const mult = 1 + meta.up.coin * 0.25;
-    return Math.floor((this.score / 8 + this.time / 2) * mult);
+    return Math.floor((this.score / 8 + this.time / 2) * mult * SCRAP_MUL);
   }
 
   showGameOver() {
@@ -686,7 +686,7 @@ export class PlayScene {
     this.state = 'won';
     const id = this.stage.id;
     this.firstClear = !meta.cleared[id];
-    this.bonus = (60 + id * 40) * (this.firstClear ? 2 : 1);
+    this.bonus = Math.floor((60 + id * 40) * (this.firstClear ? 2 : 1) * SCRAP_MUL);
     this.earned = this.rewards() + this.bonus; this.doubled = false;
     sfx.level(); setTimeout(() => sfx.coin(), 300);
     this.finalize = () => {

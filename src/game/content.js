@@ -14,6 +14,7 @@
 export const HP_MUL = { mob: 1.6, boss: 1.4 };
 export const BASE_DMG = 1; // dano base do tiro do jogador
 export const XP_MUL = 0.8; // XP que cada monstro dá (1 = normal)
+export const SCRAP_MUL = 0.5; // sucata ganha por partida (1 = normal)
 
 export const ENEMIES = {
   spider: { hp: 2, speed: 19, r: 8, dmg: 1, score: 10, xp: 1, art: 'spider' },
