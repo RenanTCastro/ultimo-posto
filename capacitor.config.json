@@ -1,0 +1,21 @@
+{
+  "appId": "com.ultimoposto.survivor",
+  "appName": "Último Posto",
+  "webDir": "dist",
+  "backgroundColor": "#120e16",
+  "android": {
+    "backgroundColor": "#120e16",
+    "allowMixedContent": false
+  },
+  "ios": {
+    "backgroundColor": "#120e16",
+    "contentInset": "never"
+  },
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK",
+      "backgroundColor": "#00000000"
+    }
+  }
+}
