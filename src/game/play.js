@@ -8,7 +8,7 @@ import * as Ads from '../engine/ads.js';
 import { buildFloor, splat, makeCanvas, PAL } from './art.js';
 import { t, RUN_UPGRADES, EVO_TEXT, STAGE_TEXT, BOSS_TEXT, SHORT } from './strings.js';
 import { meta, saveMeta } from './meta.js';
-import { ENEMIES, STAGES, ENDLESS, UPGRADES, EVOLUTIONS, HP_MUL, BASE_DMG } from './content.js';
+import { ENEMIES, STAGES, ENDLESS, UPGRADES, EVOLUTIONS, HP_MUL, BASE_DMG, XP_MUL } from './content.js';
 import { ART, MenuScene, StageScene } from './scenes.js';
 
 const TOP = 30, BOTTOM_H = 38;
@@ -373,7 +373,7 @@ export class PlayScene {
     let xp = Math.round(T.xp * xpMul);
     while (xp > 0) {
       const big = xp >= 5;
-      this.gems.push({ x: e.x + (Math.random() - 0.5) * e.r, y: e.y + (Math.random() - 0.5) * e.r, big, v: big ? 5 : 1 });
+      this.gems.push({ x: e.x + (Math.random() - 0.5) * e.r, y: e.y + (Math.random() - 0.5) * e.r, big, v: (big ? 5 : 1) * XP_MUL });
       xp -= big ? 5 : 1;
     }
     if (T.split) for (let i = 0; i < T.split.n; i++) {
