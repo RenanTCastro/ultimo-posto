@@ -56,6 +56,25 @@ edit('app/build.gradle', s => {
   return s;
 });
 
+// 3b) Imagens de abertura/ícone em WebP (o gerador cria PNGs enormes para cada densidade de tela)
+{
+  const sharp = (await import('sharp')).default;
+  const res = path.join(A, 'app/src/main/res');
+  let before = 0, after = 0;
+  for (const dir of fs.readdirSync(res)) {
+    if (!/^(drawable|mipmap)/.test(dir)) continue;
+    for (const f of fs.readdirSync(path.join(res, dir))) {
+      if (!f.endsWith('.png')) continue;
+      const src = path.join(res, dir, f), dst = src.replace(/\.png$/, '.webp');
+      before += fs.statSync(src).size;
+      await sharp(src).webp({ quality: 82 }).toFile(dst);
+      fs.unlinkSync(src);
+      after += fs.statSync(dst).size;
+    }
+  }
+  if (before) console.log(`✔ imagens Android: ${(before / 1048576).toFixed(1)} MB -> ${(after / 1048576).toFixed(1)} MB (WebP)`);
+}
+
 // 4) Tema escuro sem barra (fundo igual ao jogo enquanto carrega)
 const colors = path.join(A, 'app/src/main/res/values/colors.xml');
 if (!fs.existsSync(colors)) fs.writeFileSync(colors, '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="game_bg">#120e16</color>\n</resources>\n');

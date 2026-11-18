@@ -1,24 +1,27 @@
-// Menu, seleção de fases e loja de melhorias permanentes.
+// Menu, seleção de mundos e loja de melhorias permanentes.
 import { screen, addButton, clearButtons, setScene, drawPanel, UI } from '../engine/core.js';
 import { drawText, wrap } from '../engine/font.js';
 import { setMuted, sfx, startMusic } from '../engine/audio.js';
 import * as Ads from '../engine/ads.js';
 import { exitApp } from '../engine/platform.js';
-import { buildArt, buildFloor, PAL } from './art.js';
+import { img, drawCreature } from './gfx.js';
 import { t, META_UPGRADES, STAGE_TEXT, BOSS_TEXT } from './strings.js';
 import { STAGES, ENEMIES } from './content.js';
 import { meta, saveMeta, resetMeta, META_COSTS } from './meta.js';
 import { PlayScene } from './play.js';
 
-export const ART = {};
-export function initArt() { Object.assign(ART, buildArt()); }
+const GOLD = '#f0c060';
 
-let bg = null;
-function background(ctx, anim) {
-  const key = screen.W + 'x' + screen.H;
-  if (!bg || bg.key !== key) bg = { key, c: buildFloor(screen.W, screen.H, 3, 40, screen.H * 0.42) };
-  ctx.drawImage(bg.c, 0, 0);
-  ctx.fillStyle = 'rgba(14,10,18,0.35)'; ctx.fillRect(0, 0, screen.W, screen.H);
+// fundo: arte de abertura cobrindo a tela, escurecida
+function background(ctx, anim, dark = 0.35) {
+  const bg = img('ui/menu_bg');
+  const s = Math.max(screen.W / bg.width, screen.H / bg.height) * (1.04 + Math.sin(anim * 0.15) * 0.02);
+  const w = bg.width * s, h = bg.height * s;
+  ctx.drawImage(bg, (screen.W - w) / 2, (screen.H - h) / 2, w, h);
+  ctx.fillStyle = `rgba(8,5,4,${dark})`; ctx.fillRect(0, 0, screen.W, screen.H);
+  const g = ctx.createLinearGradient(0, 0, 0, screen.H);
+  g.addColorStop(0, 'rgba(8,5,4,0.75)'); g.addColorStop(0.3, 'rgba(8,5,4,0)'); g.addColorStop(0.65, 'rgba(8,5,4,0)'); g.addColorStop(1, 'rgba(8,5,4,0.85)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, screen.W, screen.H);
 }
 const bannerSpace = () => (Ads.adsEnabled() ? Math.ceil(Ads.BANNER_CSS_HEIGHT / screen.scale) : 0) + 4;
 
@@ -27,14 +30,13 @@ export class MenuScene {
     this.anim = 0;
     this.layout();
     Ads.showBanner(); startMusic(76, 'menu');
-    this.critters = Array.from({ length: 5 }, (_, i) => ({ a: i * 1.3, r: 70 + i * 9, sp: 0.15 + i * 0.03, type: ['spider', 'bat', 'slime', 'crab', 'wasp'][i] }));
   }
   resize() { this.layout(); }
   layout() {
     clearButtons();
     const bw = 120, x = (screen.W - bw) / 2;
     let y = screen.H - bannerSpace() - 92;
-    addButton({ x, y, w: bw, h: 22, label: t('play'), scale: 2, color: '#3c2a1e', borderColor: UI.accent, textColor: '#ffd08a', onTap: () => setScene(new StageScene()) });
+    addButton({ x, y, w: bw, h: 22, label: t('play'), scale: 1.7, color: '#3a2412', borderColor: GOLD, textColor: GOLD, onTap: () => setScene(new StageScene()) });
     y += 30;
     addButton({ x, y, w: bw, label: t('shop'), onTap: () => setScene(new ShopScene()) });
     y += 21;
@@ -46,28 +48,18 @@ export class MenuScene {
     if (Ads.needsPrivacyButton()) addButton({ x, y, w: bw, label: t('privacy'), onTap: () => Ads.showPrivacyOptions() });
   }
   onBack() { exitApp(); }
-  update(dt) { this.anim += dt; this.critters.forEach(c => (c.a += c.sp * dt)); }
+  update(dt) { this.anim += dt; }
   draw(ctx) {
-    background(ctx, this.anim);
-    const cx = screen.W / 2, cy = screen.H * 0.42;
-    for (const c of this.critters) {
-      const A = ART[c.type], f = (this.anim * 6 | 0) % 2;
-      const x = cx + Math.cos(c.a) * c.r, y = cy + Math.sin(c.a) * c.r * 0.9;
-      const img = Math.sin(c.a) > 0 ? A.flipped[f] : A.frames[f];
-      ctx.drawImage(img, Math.round(x - img.width / 2), Math.round(y - img.height / 2));
-    }
-    // jogador grande
-    const p = ART.player[(this.anim * 1.5 | 0) % 2];
-    ctx.drawImage(p, Math.round(cx - 16), Math.round(cy - 20), 32, 46);
-    // título
-    const ty = 34 + Math.round(Math.sin(this.anim * 2));
-    drawText(ctx, t('title1'), cx, ty, '#e8e2d0', { align: 'center', scale: 4 });
-    drawText(ctx, t('title2'), cx, ty + 24, UI.accent, { align: 'center', scale: 4 });
-    drawText(ctx, t('subtitle'), cx, ty + 50, PAL.cyan, { align: 'center' });
-    // recorde e moedas
-    drawPanel(ctx, cx - 60, cy + 34, 120, 22, { rivets: true });
-    drawText(ctx, `${t('best')}: ${meta.best}`, cx, cy + 37, UI.text, { align: 'center' });
-    drawText(ctx, `${t('coins')}: ${meta.coins}`, cx, cy + 46, '#ffd08a', { align: 'center' });
+    background(ctx, this.anim, 0.15);
+    const cx = screen.W / 2;
+    const ty = 26 + Math.sin(this.anim * 1.5) * 0.6;
+    drawText(ctx, t('title1'), cx, ty, '#ece2c8', { align: 'center', scale: 3.2 });
+    drawText(ctx, t('title2'), cx, ty + 22, GOLD, { align: 'center', scale: 3.2 });
+    drawText(ctx, t('subtitle'), cx, ty + 46, UI.dim, { align: 'center', scale: 0.9 });
+    const py = screen.H - bannerSpace() - 122;
+    drawPanel(ctx, cx - 60, py, 120, 22, { rivets: true, alpha: 0.85 });
+    drawText(ctx, `${t('best')}: ${meta.best}`, cx, py + 3.5, UI.text, { align: 'center', scale: 0.85 });
+    drawText(ctx, `${t('coins')}: ${meta.coins}`, cx, py + 12.5, GOLD, { align: 'center', scale: 0.85 });
   }
 }
 
@@ -83,45 +75,37 @@ export class ShopScene {
       const lvl = meta.up[k], costs = META_COSTS[k], cost = costs[lvl];
       const max = lvl >= costs.length;
       addButton({
-        x: screen.W - 62, y: y + 12, w: 52, h: 16, label: max ? t('max') : String(cost),
-        disabled: max || meta.coins < cost, textColor: '#ffd08a',
+        x: screen.W - 62, y: y + 11, w: 52, h: 16, label: max ? t('max') : String(cost),
+        disabled: max || meta.coins < cost, textColor: GOLD, scale: 0.9,
         onTap: () => { meta.coins -= cost; meta.up[k]++; saveMeta(); sfx.coin(); this.layout(); },
       });
       return { k, y };
     });
     addButton({ x: (screen.W - 100) / 2, y: screen.H - bannerSpace() - 26, w: 100, label: t('back'), onTap: () => setScene(new MenuScene()) });
-    // zerar progresso: precisa tocar duas vezes
-    const rb = addButton({ x: (screen.W - 140) / 2, y: screen.H - bannerSpace() - 50, w: 140, label: t('reset'), textColor: '#8a97a3', borderColor: '#38434f',
+    const rb = addButton({ x: (screen.W - 140) / 2, y: screen.H - bannerSpace() - 50, w: 140, label: t('reset'), textColor: UI.dim, borderColor: '#3e3428', scale: 0.85,
       onTap: () => {
         if (rb.armed) { resetMeta(); this.layout(); return; }
-        rb.armed = true; rb.label = t('reset_confirm'); rb.textColor = '#ff6a6a'; rb.borderColor = '#e0393e';
-        setTimeout(() => { rb.armed = false; rb.label = t('reset'); rb.textColor = '#8a97a3'; rb.borderColor = '#38434f'; }, 3000);
+        rb.armed = true; rb.label = t('reset_confirm'); rb.textColor = '#ff6a5a'; rb.borderColor = UI.red;
+        setTimeout(() => { rb.armed = false; rb.label = t('reset'); rb.textColor = UI.dim; rb.borderColor = '#3e3428'; }, 3000);
       } });
   }
   update(dt) { this.anim += dt; }
   draw(ctx) {
-    background(ctx, this.anim);
-    drawText(ctx, t('shop'), screen.W / 2, 14, UI.accent, { align: 'center', scale: 2 });
-    drawText(ctx, `${t('coins')}: ${meta.coins}`, screen.W / 2, 32, '#ffd08a', { align: 'center' });
+    background(ctx, this.anim, 0.6);
+    drawText(ctx, t('shop'), screen.W / 2, 12, GOLD, { align: 'center', scale: 1.8 });
+    drawText(ctx, `${t('coins')}: ${meta.coins}`, screen.W / 2, 30, GOLD, { align: 'center', scale: 0.9 });
     for (const r of this.rows) {
       drawPanel(ctx, 6, r.y, screen.W - 12, 37, { rivets: true });
       const [name, desc] = META_UPGRADES[r.k];
-      drawText(ctx, name, 12, r.y + 6, UI.text);
-      wrap(desc, screen.W - 90).forEach((l, j) => drawText(ctx, l, 12, r.y + 15 + j * 7, UI.dim));
+      drawText(ctx, name, 12, r.y + 5, UI.text, { scale: 0.9 });
+      wrap(desc, screen.W - 84, 0.75).forEach((l, j) => drawText(ctx, l, 12, r.y + 14 + j * 7, UI.dim, { scale: 0.75 }));
       const n = META_COSTS[r.k].length;
-      for (let d = 0; d < n; d++) { ctx.fillStyle = d < meta.up[r.k] ? UI.cyan : '#3a4654'; ctx.fillRect(12 + d * 6, r.y + 30, 4, 3); }
+      for (let d = 0; d < n; d++) { ctx.fillStyle = d < meta.up[r.k] ? UI.cyan : '#3e3428'; ctx.beginPath(); ctx.arc(14 + d * 6, r.y + 31, 1.5, 0, Math.PI * 2); ctx.fill(); }
     }
   }
 }
 
-// ---------------- Seleção de fases ----------------
-const thumbs = new Map();
-function thumb(theme, w, h) {
-  const k = theme + w + 'x' + h;
-  if (!thumbs.has(k)) thumbs.set(k, buildFloor(w, h, 5, 0, h / 2, theme));
-  return thumbs.get(k);
-}
-
+// ---------------- Seleção de mundos ----------------
 export class StageScene {
   enter() { this.anim = 0; this.layout(); Ads.showBanner(); startMusic(76, 'menu'); }
   resize() { this.layout(); }
@@ -142,35 +126,43 @@ export class StageScene {
   }
   update(dt) { this.anim += dt; }
   draw(ctx) {
-    background(ctx, this.anim);
-    drawText(ctx, t('stages'), screen.W / 2, 10, UI.accent, { align: 'center', scale: 2 });
+    background(ctx, this.anim, 0.6);
+    drawText(ctx, t('stages'), screen.W / 2, 9, GOLD, { align: 'center', scale: 1.8 });
   }
   drawRow(ctx, b, row) {
     const st = STAGES.find(s => s.id === row.id);
     const theme = st ? st.theme : ['ruins', 'sewer', 'junk', 'toxic', 'lab'][(this.anim / 2 | 0) % 5];
     const oy = b.pressed && !row.locked ? 1 : 0;
-    drawPanel(ctx, b.x, b.y + oy, b.w, b.h, { border: row.locked ? '#38434f' : meta.cleared[row.id] ? '#ffd23a' : UI.border });
-    ctx.drawImage(thumb(theme, b.w - 2, b.h - 2), b.x + 1, b.y + oy + 1);
-    ctx.fillStyle = row.locked ? 'rgba(10,8,14,0.78)' : 'rgba(10,8,14,0.45)';
-    ctx.fillRect(b.x + 1, b.y + oy + 1, b.w - 2, b.h - 2);
+    const x = b.x, y = b.y + oy, w = b.w, h = b.h;
+    // miniatura do chão do mundo
+    const tile = img(`backgrounds/${theme}_floor`);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+    ctx.drawImage(tile, 0, 0, tile.width, tile.width * h / w, x, y, w, h);
+    const g = ctx.createLinearGradient(x, 0, x + w, 0);
+    g.addColorStop(0, row.locked ? 'rgba(8,5,4,0.85)' : 'rgba(8,5,4,0.8)'); g.addColorStop(0.7, row.locked ? 'rgba(8,5,4,0.8)' : 'rgba(8,5,4,0.35)'); g.addColorStop(1, 'rgba(8,5,4,0.2)');
+    ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
+    if (st && !row.locked) { // chefe do mundo
+      const art = ENEMIES[st.boss].art;
+      drawCreature(ctx, art, (this.anim * 2 | 0) % 2, x + w - 22, y + h / 2 + 1, 0, 1, { scale: 0.45 * Math.min(1, h / 36), t: this.anim });
+    }
+    ctx.restore();
+    ctx.strokeStyle = row.locked ? '#3e3428' : meta.cleared[row.id] ? GOLD : UI.border; ctx.lineWidth = 0.7; ctx.strokeRect(x + 0.35, y + 0.35, w - 0.7, h - 0.7);
     const title = st ? `${t('world')} ${st.id}: ${STAGE_TEXT[st.id]}` : STAGE_TEXT.endless;
-    drawText(ctx, title, b.x + 6, b.y + oy + 5, row.locked ? '#5c6670' : UI.text);
+    drawText(ctx, title, x + 6, y + 4, row.locked ? '#6a5e50' : UI.text, { scale: 0.85 });
     let sub;
     if (row.locked) sub = st ? t('locked') : t('unlock_endless');
     else if (st) sub = `${t('boss_in')}: ${BOSS_TEXT[st.boss]}`;
     else sub = meta.bestEndless ? `${t('best_time')}: ${Math.floor(meta.bestEndless / 60)}:${String(meta.bestEndless % 60).padStart(2, '0')}` : t('endless_desc');
-    drawText(ctx, sub, b.x + 6, b.y + oy + 14, row.locked ? '#5c6670' : UI.dim);
-    if (meta.cleared[row.id]) drawText(ctx, t('cleared'), b.x + 6, b.y + oy + b.h - 9, '#ffd23a');
-    else if (st && meta.bestSub[row.id]) drawText(ctx, `${t('best_sub')}: ${row.id}-${meta.bestSub[row.id]}`, b.x + 6, b.y + oy + b.h - 9, UI.accent);
-    if (st && !row.locked) { // retrato do chefe
-      const A = ART[ENEMIES[st.boss].art].frames[(this.anim * 3 | 0) % 2];
-      const sc = Math.min(1, (b.h - 4) / A.height);
-      ctx.drawImage(A, Math.round(b.x + b.w - A.width * sc - 4), Math.round(b.y + oy + (b.h - A.height * sc) / 2), Math.round(A.width * sc), Math.round(A.height * sc));
-    }
+    drawText(ctx, sub, x + 6, y + 13, row.locked ? '#6a5e50' : UI.dim, { scale: 0.72 });
+    if (meta.cleared[row.id]) drawText(ctx, t('cleared'), x + 6, y + h - 9, GOLD, { scale: 0.75 });
+    else if (st && meta.bestSub[row.id]) drawText(ctx, `${t('best_sub')}: ${row.id}-${meta.bestSub[row.id]}`, x + 6, y + h - 9, UI.accent, { scale: 0.75 });
     if (row.locked) { // cadeado
-      const lx = b.x + b.w - 16, ly = b.y + oy + b.h / 2 - 5;
-      ctx.fillStyle = '#7d98ad'; ctx.fillRect(lx + 1, ly, 6, 2); ctx.fillRect(lx, ly + 1, 2, 4); ctx.fillRect(lx + 6, ly + 1, 2, 4);
-      ctx.fillStyle = '#d8c79a'; ctx.fillRect(lx - 1, ly + 4, 10, 7); ctx.fillStyle = '#26323f'; ctx.fillRect(lx + 3, ly + 6, 2, 3);
+      const lx = x + w - 16, ly = y + h / 2 - 4;
+      ctx.strokeStyle = '#9a8a70'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(lx + 4, ly + 2, 2.6, Math.PI, 0); ctx.stroke();
+      ctx.fillStyle = '#c8a860'; ctx.fillRect(lx, ly + 2, 8, 6.5);
+      ctx.fillStyle = '#2a1e14'; ctx.fillRect(lx + 3.3, ly + 4, 1.4, 2.6);
     }
   }
 }

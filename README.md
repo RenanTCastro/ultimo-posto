@@ -16,17 +16,27 @@ src/engine/           ← motor reutilizável (NÃO muda entre jogos)
   platform.js         save, vibração, botão voltar, pausa ao minimizar
 src/game/             ← o jogo em si (muda a cada jogo)
   content.js          ★ fases, monstros, melhorias e evoluções (dados — edite aqui para criar conteúdo)
-  art.js / bestiary.js  sprites gerados por código no estilo pedido
-  biomes.js           cenários de cada fase (piso, objetos, cores)
+  gfx.js              desenho da arte realista (criaturas giradas ou com frente/costas/lado, herói em 8 direções, cenário)
+src/art/              arte otimizada (WebP) usada pelo jogo — gerada por tools/process-art.py a partir de art_src/
   play.js             gameplay
   scenes.js           menu e loja de melhorias
   strings.js          textos PT/EN
   meta.js             progresso salvo
-assets/               ícone e splash (gerados por tools/make-icons.py)
+assets/               ícone e tela de abertura do app
 .github/workflows/    build Android automático
 docs/privacy.html     política de privacidade (publicar via GitHub Pages)
 store/                textos da Play Store
 ```
+
+## Arte
+
+A arte realista (medieval sombria) vem de PNGs grandes em `art_src/` (fora do git — guarde os zips originais).
+Para atualizar: coloque os PNGs novos em `art_src/` com os mesmos nomes e rode `python3 tools/process-art.py`.
+Ícone e abertura do app ficam em `assets/` (o build converte tudo para WebP).
+
+- Criaturas vistas de cima (aranha, ratazana, lobo, vespa, morcego, sapo, chefes aranha/sapo) **giram** para onde andam.
+- Personagens em pé (ogro, esqueleto, goblin, bruxa, golem, Bruxa do Pântano, Lich) usam **frente / costas / lado**.
+- O herói tem **8 direções** e aponta a besta para onde atira.
 
 ## Conteúdo atual
 
@@ -94,4 +104,4 @@ A cada atualização: aumente `versionCode` em `game.config.js`.
 1. Copie este repositório.
 2. Mude `game.config.js` (nome, `appId` novo, IDs de anúncio novos — um app no AdMob por jogo).
 3. Troque `src/game/` (arte, gameplay, textos). O `src/engine/` continua igual.
-4. Gere ícone: `npm run dev` e depois `python3 tools/make-icons.py`.
+4. Troque a arte em `art_src/` e o ícone/abertura em `assets/`, depois rode `python3 tools/process-art.py`.

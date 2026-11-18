@@ -5,3 +5,4 @@ ios/
 *.keystore
 *.jks
 .DS_Store
+art_src/
