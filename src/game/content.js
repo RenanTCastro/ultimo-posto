@@ -39,52 +39,87 @@ export const ENEMIES = {
   mutant: { boss: true, hp: 220, speed: 9, r: 18, dmg: 2, score: 1500, xp: 30, art: 'bossMutant', armor: 0.35, dash: { range: 130, wind: 0.7, speed: 120, cd: 4.5 }, spray: { n: 12, cd: 4, speed: 52 }, summon: { type: 'bomber', n: 3, cd: 7 } },
 };
 
-// Fases: [segundo em que começa a aparecer, monstro, peso]
+// ============================================================
+//  MUNDOS: cada um tem 5 fases seguidas (1-1 ... 1-5) numa corrida contínua.
+//  Você mantém nível e melhorias entre as fases; o chefe aparece no fim da 5ª.
+//  hp: vida dos monstros no começo da 1ª fase -> fim da 5ª (multiplicador)
+//  spawn: intervalo entre levas (segundos) no começo -> fim
+//  mobs: [fase em que começa a aparecer, monstro, peso]
+// ============================================================
+export const SUB_DURATION = [60, 60, 65, 70, 70]; // segundos de cada fase (o chefe vem ao fim da 5ª)
+
 export const STAGES = [
-  { id: 1, theme: 'ruins', duration: 150, hpMul: 1.25, spawn: [1.15, 0.27], bpm: 112, boss: 'queen',
-    mobs: [[0, 'spider', 6], [0, 'mite', 4], [20, 'bat', 4], [50, 'bomber', 1.5], [70, 'brute', 1.5]], hordes: ['mite', 'bat'] },
-  { id: 2, theme: 'sewer', duration: 150, hpMul: 2.0, spawn: [1.0, 0.24], bpm: 118, boss: 'toad',
-    mobs: [[0, 'slime', 4], [0, 'spider', 3], [0, 'mite', 2], [20, 'spitter', 3], [45, 'rat', 3], [90, 'brute', 1.5]], hordes: ['slimelet', 'mite'] },
-  { id: 3, theme: 'junk', duration: 160, hpMul: 2.8, spawn: [1.05, 0.23], bpm: 124, boss: 'golem',
-    mobs: [[0, 'rat', 4], [0, 'crab', 3], [0, 'wasp', 3], [25, 'bomber', 3], [50, 'spitter', 2], [80, 'brute', 2]], hordes: ['wasp', 'rat'] },
-  { id: 4, theme: 'toxic', duration: 160, hpMul: 3.7, spawn: [1.0, 0.21], bpm: 128, boss: 'mother',
-    mobs: [[0, 'slime', 4], [0, 'wasp', 4], [15, 'moth', 1.5], [30, 'ghost', 3], [55, 'spitter', 3], [85, 'crab', 2]], hordes: ['wasp', 'slimelet'] },
-  { id: 5, theme: 'lab', duration: 170, hpMul: 4.8, spawn: [0.95, 0.19], bpm: 134, boss: 'mutant',
-    mobs: [[0, 'spider', 3], [0, 'crab', 3], [0, 'bomber', 2], [0, 'wasp', 2], [15, 'ghost', 3], [30, 'rat', 3], [45, 'moth', 1.5], [60, 'spitter', 3], [90, 'brute', 2.5]],
+  { id: 1, theme: 'ruins', bpm: 112, boss: 'queen', hp: [1, 2.6], spawn: [1.1, 0.3],
+    mobs: [[1, 'spider', 6], [1, 'mite', 4], [2, 'bat', 4], [3, 'bomber', 1.5], [4, 'brute', 1.5], [5, 'spitter', 1.5]], hordes: ['mite', 'bat'] },
+  { id: 2, theme: 'sewer', bpm: 118, boss: 'toad', hp: [1.5, 3.8], spawn: [1.0, 0.27],
+    mobs: [[1, 'slime', 4], [1, 'spider', 3], [1, 'mite', 2], [2, 'spitter', 3], [3, 'rat', 3], [4, 'brute', 1.5], [5, 'bomber', 2]], hordes: ['slimelet', 'mite'] },
+  { id: 3, theme: 'junk', bpm: 124, boss: 'golem', hp: [2.1, 5.3], spawn: [0.95, 0.25],
+    mobs: [[1, 'rat', 4], [1, 'crab', 3], [1, 'wasp', 3], [2, 'bomber', 3], [3, 'spitter', 2], [4, 'brute', 2], [5, 'ghost', 2]], hordes: ['wasp', 'rat'] },
+  { id: 4, theme: 'toxic', bpm: 128, boss: 'mother', hp: [2.8, 7.2], spawn: [0.9, 0.23],
+    mobs: [[1, 'slime', 4], [1, 'wasp', 4], [2, 'moth', 1.5], [2, 'ghost', 3], [3, 'spitter', 3], [4, 'crab', 2], [5, 'brute', 2]], hordes: ['wasp', 'slimelet'] },
+  { id: 5, theme: 'lab', bpm: 134, boss: 'mutant', hp: [3.6, 9.5], spawn: [0.85, 0.2],
+    mobs: [[1, 'spider', 3], [1, 'crab', 3], [1, 'bomber', 2], [1, 'wasp', 2], [2, 'ghost', 3], [2, 'rat', 3], [3, 'moth', 1.5], [3, 'spitter', 3], [4, 'brute', 2.5], [5, 'slime', 2]],
     hordes: ['bomber', 'wasp', 'mite'] },
 ];
+// Monstros "elite": mais vida e contorno vermelho. Chance cresce a cada fase/mundo.
+export const ELITE = { hp: 3.5, speed: 1.1, xp: 4, score: 4, chance: (world, sub) => Math.min(0.2, 0.015 + 0.025 * (sub - 1) + 0.015 * (world - 1)) };
+
 export const ENDLESS = {
-  id: 'endless', themes: ['ruins', 'sewer', 'junk', 'toxic', 'lab'], duration: Infinity, bpm: 128,
+  id: 'endless', themes: ['ruins', 'sewer', 'junk', 'toxic', 'lab'], bpm: 128,
   bosses: ['queen', 'toad', 'golem', 'mother', 'mutant'], bossEvery: 90,
   mobs: [[0, 'spider', 5], [0, 'mite', 3], [15, 'bat', 3], [25, 'slime', 3], [35, 'rat', 3], [45, 'spitter', 2], [55, 'wasp', 3],
     [65, 'crab', 2], [75, 'bomber', 2], [90, 'ghost', 2], [100, 'moth', 1.2], [110, 'brute', 2]],
   hordes: ['mite', 'wasp', 'slimelet', 'bomber'],
 };
 
-// Melhorias da partida. kind: weapon (arma) | passive (passivo)
+// ============================================================
+//  MELHORIAS DA PARTIDA (25). Os números de cada uma ficam em play.js -> recalc().
+//  kind: weapon (arma nova) | passive (melhora algo) | defense (sobrevivência)
+//  heal: cura ao pegar
+// ============================================================
 export const UPGRADES = {
-  dmg: { max: 8, kind: 'passive', apply: p => (p.s.dmg += 1) },
-  rate: { max: 8, kind: 'passive', apply: p => (p.s.rate *= 1.10) },
-  multi: { max: 4, kind: 'passive', apply: p => p.s.multi++ },
-  pierce: { max: 3, kind: 'passive', apply: p => p.s.pierce++ },
-  drone: { max: 5, kind: 'weapon', apply: p => p.s.drones++ },
-  laser: { max: 6, kind: 'passive', apply: p => { p.s.droneDmg += 0.8; p.s.droneRate *= 1.2; } },
-  hp: { max: 5, kind: 'passive', apply: p => { p.maxHp++; p.hp = Math.min(p.maxHp, p.hp + 2); } },
-  regen: { max: 3, kind: 'passive', apply: p => p.s.regen++ },
-  crit: { max: 5, kind: 'passive', apply: p => (p.s.crit += 0.12) },
-  energy: { max: 4, kind: 'passive', apply: p => (p.s.energyGain *= 1.35) },
-  saw: { max: 5, kind: 'weapon', apply: p => p.s.saw++ },
-  nade: { max: 5, kind: 'weapon', apply: p => p.s.nade++ },
-  shock: { max: 5, kind: 'weapon', apply: p => p.s.shock++ },
+  // tiro
+  dmg: { max: 6, kind: 'passive' },      // +15% dano do tiro
+  rate: { max: 6, kind: 'passive' },     // +10% cadência
+  multi: { max: 3, kind: 'passive' },    // +1 projétil (cada um 75% do dano)
+  pierce: { max: 3, kind: 'passive' },   // atravessa +1
+  bounce: { max: 3, kind: 'passive' },   // ricocheteia +1
+  crit: { max: 5, kind: 'passive' },     // +8% chance de crítico
+  critdmg: { max: 4, kind: 'passive' },  // +40% dano crítico
+  burn: { max: 3, kind: 'passive' },     // tiros queimam
+  frost: { max: 3, kind: 'passive' },    // tiros deixam lento
+  exec: { max: 3, kind: 'passive' },     // executa quem tem pouca vida
+  // drones e armas
+  drone: { max: 4, kind: 'weapon' },     // +1 drone
+  laser: { max: 5, kind: 'passive' },    // drones +20% dano, +10% velocidade
+  power: { max: 5, kind: 'passive' },    // +12% dano de todas as armas extras
+  saw: { max: 5, kind: 'weapon' },
+  nade: { max: 5, kind: 'weapon' },
+  shock: { max: 5, kind: 'weapon' },
+  mine: { max: 5, kind: 'weapon' },
+  bolt: { max: 5, kind: 'weapon' },
+  // sobrevivência e utilidade
+  hp: { max: 4, kind: 'defense', heal: 1 },
+  regen: { max: 3, kind: 'defense' },
+  dodge: { max: 4, kind: 'defense' },    // +8% chance de esquivar
+  thorns: { max: 3, kind: 'defense' },   // fere quem te toca
+  energy: { max: 4, kind: 'passive' },   // pulso carrega mais rápido
+  pulse: { max: 3, kind: 'passive' },    // pulso mais forte e maior
+  xp: { max: 4, kind: 'passive' },       // +12% XP
+  greed: { max: 3, kind: 'passive' },    // +15% sucata
 };
 
-// Evoluções: aparecem como carta dourada quando os requisitos são atingidos
+// Evoluções: carta dourada quando os requisitos são atingidos
 export const EVOLUTIONS = {
-  railgun: { req: { multi: 3, pierce: 3 } },
-  swarm: { req: { drone: 4, laser: 3 } },
+  railgun: { req: { multi: 2, pierce: 3 } },
+  swarm: { req: { drone: 2, laser: 3 } },
   storm: { req: { energy: 3, shock: 3 } },
-  nanobots: { req: { hp: 3, regen: 3 }, apply: p => { p.maxHp += 2; p.hp = Math.min(p.maxHp, p.hp + 2); } },
-  executor: { req: { dmg: 4, crit: 4 }, apply: p => (p.s.crit += 0.1) },
+  nanobots: { req: { hp: 3, regen: 3 }, heal: 2 },
+  executor: { req: { crit: 4, critdmg: 3 } },
   cyclone: { req: { saw: 5, rate: 3 } },
   carpet: { req: { nade: 5, multi: 2 } },
+  inferno: { req: { burn: 3, nade: 3 } },
+  zero: { req: { frost: 3, shock: 3 } },
+  skyfury: { req: { bolt: 5, crit: 2 } },
+  minefield: { req: { mine: 5, pulse: 2 } },
 };

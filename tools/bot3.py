@@ -15,12 +15,15 @@ async def main(url, stage, secs, shots):
         br = await p.chromium.launch(executable_path='/usr/bin/google-chrome')
         pg = await br.new_page(viewport={'width': 390, 'height': 844}, locale='pt-BR')
         errs=[]; pg.on('pageerror', lambda e: errs.append(str(e)))
-        await pg.goto(url); await pg.wait_for_timeout(1000)
+        await pg.goto(url); await pg.wait_for_timeout(600)
+        import os
+        if os.environ.get('META'):
+            await pg.evaluate(f"localStorage.setItem('ultimoposto.save.v2', {json.dumps(os.environ['META'])})"); await pg.reload(); await pg.wait_for_timeout(800)
         await pg.evaluate(f"window.__play({json.dumps(stage)})")
         await pg.evaluate(JS)
         for i in range(int(secs/10)):
             await pg.wait_for_timeout(10000)
-            st = await pg.evaluate("(()=>{const s=window.__getScene(); if(!s.lv) return {st:'left'}; return {st:s.state,t:Math.round(s.time),hp:s.hp,lvl:s.level,n:s.enemies.length,k:s.kills,boss:s.boss?Math.round(s.boss.hp):null,evo:Object.keys(s.evo).join(',')}})()")
+            st = await pg.evaluate("(()=>{const s=window.__getScene(); if(!s.lv) return {st:'left'}; return {st:s.state,sub:s.world+'-'+s.sub,t:Math.round(s.time),hp:s.hp,lvl:s.level,n:s.enemies.length,k:s.kills,boss:s.boss?Math.round(s.boss.hp):null,evo:Object.keys(s.evo).join(',')}})()")
             print(st, flush=True)
             if i in shots: await pg.screenshot(path=f'/tmp/b3_{stage}_{i}.png')
             if st['st'] in ('over','won','left'): break

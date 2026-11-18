@@ -185,7 +185,9 @@ export function buildArt() {
   A.playerHit = tint(A.player[0], '#ffffff');
   const mk = (fn, ...args) => {
     const f = [fn(0, ...args), fn(1, ...args)];
-    return { frames: f, flipped: f.map(flipX), hit: tint(f[0], '#ffffff') };
+    const fl = f.map(flipX);
+    // elite: silhueta vermelha desenhada 1px ao redor do sprite
+    return { frames: f, flipped: fl, hit: tint(f[0], '#ffffff'), red: f.map(c => tint(c, '#ff2a2a')), redF: fl.map(c => tint(c, '#ff2a2a')) };
   };
   A.spider = mk(spider);
   A.bat = mk(bat);

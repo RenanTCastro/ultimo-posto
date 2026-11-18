@@ -30,10 +30,13 @@ store/                textos da Play Store
 
 ## Conteúdo atual
 
-- **5 fases + modo Sem Fim**: Ruínas → Esgoto → Ferro-velho → Floresta Tóxica → Laboratório X. Cada fase dura ~2:30 e termina com um chefe; vencer libera a próxima. Fases avançadas dão um *kit inicial* de melhorias.
-- **13 monstros + 5 chefes**: aranha, morcego, ácaro, brutamonte, cuspidor (atira ácido), gosma (se divide), caranguejo blindado, rato (dá bote), espectro (fica intangível), mariposa (cura os outros), besouro-bomba (explode), vespa (enxame). Chefes: Rainha Aranha, Sapo do Esgoto, Golem de Sucata, Mãe Fungo, Mutante X.
-- **13 melhorias** (incl. 3 armas novas: serras orbitais, granadas, campo de choque) e **7 evoluções** que aparecem como carta dourada quando você combina duas melhorias (a tela de pausa mostra as receitas).
+- **5 mundos, cada um com 5 fases (1-1 … 1-5) numa corrida contínua**: você mantém nível e melhorias de uma fase para a outra; entre elas, cura 1 coração e escolhe uma recompensa. O chefe aparece no fim da 5ª fase. Morreu, recomeça o mundo. Mundos: Ruínas, Esgoto, Ferro-velho, Floresta Tóxica, Laboratório X — mais o modo **Sem Fim**.
+- A cada fase os monstros ganham vida e velocidade, e aparecem **elites** (contorno vermelho, 3,5x vida).
+- **13 monstros + 5 chefes**.
+- **26 melhorias** em porcentagem (tiro, drones, 5 armas extras, defesa e utilidade) e **11 evoluções** (carta dourada). A pausa mostra as receitas que você já começou.
 - Botão **Trocar** nas cartas (+1 com anúncio recompensado) e melhoria permanente "Sorte".
+
+Ajustes rápidos de dificuldade no topo de `src/game/content.js`: `HP_MUL`, `XP_MUL`, `SCRAP_MUL`, `SUB_DURATION`, `ELITE`, e `hp`/`spawn` de cada mundo. Os números de cada melhoria ficam em `recalc()` em `play.js`.
 
 Para adicionar um monstro: crie o sprite em `bestiary.js`, adicione uma linha em `ENEMIES` combinando comportamentos prontos, e coloque-o na lista `mobs` de alguma fase.
 

@@ -153,7 +153,7 @@ export class StageScene {
     ctx.drawImage(thumb(theme, b.w - 2, b.h - 2), b.x + 1, b.y + oy + 1);
     ctx.fillStyle = row.locked ? 'rgba(10,8,14,0.78)' : 'rgba(10,8,14,0.45)';
     ctx.fillRect(b.x + 1, b.y + oy + 1, b.w - 2, b.h - 2);
-    const title = st ? `${t('stage')} ${st.id}: ${STAGE_TEXT[st.id]}` : STAGE_TEXT.endless;
+    const title = st ? `${t('world')} ${st.id}: ${STAGE_TEXT[st.id]}` : STAGE_TEXT.endless;
     drawText(ctx, title, b.x + 6, b.y + oy + 5, row.locked ? '#5c6670' : UI.text);
     let sub;
     if (row.locked) sub = st ? t('locked') : t('unlock_endless');
@@ -161,6 +161,7 @@ export class StageScene {
     else sub = meta.bestEndless ? `${t('best_time')}: ${Math.floor(meta.bestEndless / 60)}:${String(meta.bestEndless % 60).padStart(2, '0')}` : t('endless_desc');
     drawText(ctx, sub, b.x + 6, b.y + oy + 14, row.locked ? '#5c6670' : UI.dim);
     if (meta.cleared[row.id]) drawText(ctx, t('cleared'), b.x + 6, b.y + oy + b.h - 9, '#ffd23a');
+    else if (st && meta.bestSub[row.id]) drawText(ctx, `${t('best_sub')}: ${row.id}-${meta.bestSub[row.id]}`, b.x + 6, b.y + oy + b.h - 9, UI.accent);
     if (st && !row.locked) { // retrato do chefe
       const A = ART[ENEMIES[st.boss].art].frames[(this.anim * 3 | 0) % 2];
       const sc = Math.min(1, (b.h - 4) / A.height);

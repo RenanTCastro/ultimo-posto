@@ -5,7 +5,7 @@ import { setMuted } from '../engine/audio.js';
 const KEY = 'ultimoposto.save.v2'; // trocar a versão zera o progresso de todos
 export const meta = {
   coins: 0, best: 0, runs: 0, muted: false, tutorial: false,
-  unlocked: 1, cleared: {}, bestEndless: 0,
+  unlocked: 1, cleared: {}, bestSub: {}, bestEndless: 0,
   up: { hp: 0, dmg: 0, drone: 0, coin: 0, reroll: 0 },
 };
 
@@ -26,6 +26,6 @@ export const saveMeta = () => save(KEY, meta);
 
 // Zera progresso (mantém som e tutorial)
 export function resetMeta() {
-  Object.assign(meta, { coins: 0, best: 0, runs: 0, unlocked: 1, cleared: {}, bestEndless: 0, up: { hp: 0, dmg: 0, drone: 0, coin: 0, reroll: 0 } });
+  Object.assign(meta, { coins: 0, best: 0, runs: 0, unlocked: 1, cleared: {}, bestSub: {}, bestEndless: 0, up: { hp: 0, dmg: 0, drone: 0, coin: 0, reroll: 0 } });
   return saveMeta();
 }
