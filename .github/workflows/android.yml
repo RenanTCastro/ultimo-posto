@@ -1,11 +1,10 @@
-# Gera o app Android automaticamente na nuvem (GitHub Actions).
-# - Todo push na branch main: APK de teste (instala direto no celular)
-# - Tag "v1.0.0" ou botão "Run workflow": também gera o AAB assinado para a Play Store
+# Gera o app Android na nuvem (GitHub Actions) — só quando pedido:
+# - Botão "Run workflow" na aba Actions (ou o Claude dispara quando você pedir)
+# - Tag "v1.0.0": versão para a Play Store
 name: Android build
 
 on:
   push:
-    branches: [main]
     tags: ['v*']
   workflow_dispatch:
 
