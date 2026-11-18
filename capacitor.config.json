@@ -1,6 +1,6 @@
 {
-  "appId": "com.ultimoposto.survivor",
-  "appName": "Último Posto",
+  "appId": "com.siegeofdarkness.game",
+  "appName": "Siege of Darkness",
   "webDir": "dist",
   "backgroundColor": "#120e16",
   "android": {

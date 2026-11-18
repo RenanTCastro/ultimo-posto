@@ -1,7 +1,7 @@
-# Fábrica de Jogos — template "Último Posto"
+# Fábrica de Jogos — "Siege of Darkness"
 
 Template de jogo mobile 2D (pixel art, retrato) com anúncios AdMob e build automático.
-O primeiro jogo da fábrica é **Último Posto**: o jogador fica no centro, criaturas chegam de todos os lados e você segura o dedo para atirar enquanto drones laser te ajudam.
+O primeiro jogo da fábrica é **Siege of Darkness**: um caçador com uma besta fica no centro, criaturas das trevas chegam de todos os lados e você segura o dedo para atirar enquanto orbes arcanos te ajudam.
 
 ## Estrutura
 

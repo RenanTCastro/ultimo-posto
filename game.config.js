@@ -2,8 +2,8 @@
 //  CONFIGURAÇÃO DO JOGO — único arquivo que muda entre jogos da fábrica
 // ============================================================
 export default {
-  appId: 'com.ultimoposto.survivor',   // ID único na loja (não pode mudar depois de publicar)
-  name: 'Último Posto',
+  appId: 'com.siegeofdarkness.game',   // ID único na loja (não pode mudar depois de publicar)
+  name: 'Siege of Darkness',
   versionName: '1.0.0',
   versionCode: 1,                       // aumente a cada envio para a Play Store
 

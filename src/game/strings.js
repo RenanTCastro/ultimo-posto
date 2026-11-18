@@ -1,7 +1,7 @@
 // Textos do jogo (PT + EN). O idioma segue o do aparelho.
 const S = {
   pt: {
-    title1: 'ULTIMO', title2: 'POSTO', subtitle: 'SOBREVIVA AS RUINAS',
+    title1: 'SIEGE OF', title2: 'DARKNESS', subtitle: 'SOBREVIVA AS HORDAS',
     play: 'JOGAR', shop: 'MELHORIAS', sound_on: 'SOM: LIGADO', sound_off: 'SOM: DESLIGADO', privacy: 'PRIVACIDADE',
     best: 'RECORDE', coins: 'OURO', hold: 'SEGURE PARA ATIRAR', pulse: 'PULSO',
     score: 'PONTOS', level: 'NV', energy: 'ENERGIA', xp: 'XP',
@@ -20,7 +20,7 @@ const S = {
     kit: 'KIT INICIAL', weapon: 'ARMA', passive: 'PASSIVO', evo: 'EVOLUCAO', newtag: 'NOVO!', evolved: 'EVOLUIU!', best_time: 'MELHOR',
   },
   en: {
-    title1: 'LAST', title2: 'OUTPOST', subtitle: 'SURVIVE THE RUINS',
+    title1: 'SIEGE OF', title2: 'DARKNESS', subtitle: 'SURVIVE THE HORDES',
     play: 'PLAY', shop: 'UPGRADES', sound_on: 'SOUND: ON', sound_off: 'SOUND: OFF', privacy: 'PRIVACY',
     best: 'BEST', coins: 'GOLD', hold: 'HOLD TO SHOOT', pulse: 'PULSE',
     score: 'SCORE', level: 'LV', energy: 'ENERGY', xp: 'XP',

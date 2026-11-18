@@ -2,7 +2,7 @@
 import { load, save } from '../engine/platform.js';
 import { setMuted } from '../engine/audio.js';
 
-const KEY = 'ultimoposto.save.v2'; // trocar a versão zera o progresso de todos
+const KEY = 'ultimoposto.save.v2'; // nome interno antigo mantido para não apagar o progresso // trocar a versão zera o progresso de todos
 export const meta = {
   coins: 0, best: 0, runs: 0, muted: false, tutorial: false,
   unlocked: 1, cleared: {}, bestSub: {}, bestEndless: 0,

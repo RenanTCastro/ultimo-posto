@@ -65,7 +65,7 @@ jobs:
 
       # APK de teste em Releases: no celular, abra github.com/RenanTCastro/ultimo-posto/releases/latest e toque no .apk
       - name: Renomear APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk ultimo-posto-teste.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk siege-of-darkness-teste.apk
 
       - name: Publicar APK em Releases
         uses: softprops/action-gh-release@v2
@@ -73,7 +73,7 @@ jobs:
           tag_name: teste-${{ github.run_number }}
           name: APK de teste #${{ github.run_number }}
           body: |
-            Build de teste (anúncios de TESTE do Google). Para instalar no Android: toque em ultimo-posto-teste.apk e permita "instalar apps desconhecidos".
+            Build de teste (anúncios de TESTE do Google). Para instalar no Android: toque em siege-of-darkness-teste.apk e permita "instalar apps desconhecidos".
             Commit: ${{ github.sha }}
-          files: ultimo-posto-teste.apk
+          files: siege-of-darkness-teste.apk
           make_latest: true
