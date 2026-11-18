@@ -20,7 +20,7 @@ function background(ctx, anim) {
   ctx.drawImage(bg.c, 0, 0);
   ctx.fillStyle = 'rgba(14,10,18,0.35)'; ctx.fillRect(0, 0, screen.W, screen.H);
 }
-const bannerSpace = () => Math.ceil(Ads.BANNER_CSS_HEIGHT / screen.scale) + 4;
+const bannerSpace = () => (Ads.adsEnabled() ? Math.ceil(Ads.BANNER_CSS_HEIGHT / screen.scale) : 0) + 4;
 
 export class MenuScene {
   enter() {

@@ -11,9 +11,9 @@
 //  split      divide ao morrer              explode   explode ao morrer (fere monstros e você)
 //  summon     (chefe) invoca lacaios        spray     (chefe) rajada circular de projéteis
 // Ajuste global de dificuldade (vida dos monstros)
-export const HP_MUL = { mob: 1.6, boss: 1.4 };
+export const HP_MUL = { mob: 1.92, boss: 1.68 };
 export const BASE_DMG = 1; // dano base do tiro do jogador
-export const XP_MUL = 0.8; // XP que cada monstro dá (1 = normal)
+export const XP_MUL = 0.65; // XP que cada monstro dá (1 = normal)
 export const SCRAP_MUL = 0.5; // sucata ganha por partida (1 = normal)
 
 export const ENEMIES = {

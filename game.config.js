@@ -8,6 +8,8 @@ export default {
   versionCode: 1,                       // aumente a cada envio para a Play Store
 
   ads: {
+    // false = sem anúncio nenhum (para testar o jogo). Os botões de anúncio premiado funcionam de graça.
+    enabled: false,
     // true = anúncios de teste do Google. Troque para false SÓ depois de colar seus IDs reais.
     testing: true,
     interstitialEvery: 2,               // intersticial a cada N game overs

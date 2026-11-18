@@ -5,7 +5,8 @@ import { isNative, platform } from './platform.js';
 let AdMob = null, E = null, cfg = null;
 let ready = false, interstitialLoaded = false, rewardLoaded = false;
 let bannerVisible = false, lastInterstitial = 0, gameOvers = 0;
-let privacyRequired = false;
+let privacyRequired = false, disabled = false;
+export const adsEnabled = () => !disabled;
 export const BANNER_CSS_HEIGHT = 60; // espaço reservado no layout para o banner adaptativo
 
 // IDs oficiais de TESTE do Google — seguros para desenvolvimento.
@@ -21,6 +22,7 @@ function ids() {
 
 export async function initAds(config) {
   cfg = config;
+  if (config.enabled === false) { disabled = true; ready = true; return; } // anúncios desligados
   if (!isNative) { ready = true; return; }
   try {
     const mod = await import('@capacitor-community/admob');
@@ -54,7 +56,7 @@ async function preloadRewarded() {
 }
 
 export async function showBanner() {
-  if (!ready || bannerVisible) return;
+  if (disabled || !ready || bannerVisible) return;
   bannerVisible = true;
   if (!AdMob) return mockBanner(true);
   try {
@@ -70,6 +72,7 @@ export async function hideBanner() {
 
 // Intersticial com frequência controlada (a cada N game overs, respeitando intervalo mínimo)
 export async function maybeInterstitial() {
+  if (disabled) return;
   gameOvers++;
   const now = Date.now();
   if (gameOvers % cfg.interstitialEvery !== 0) return;
@@ -84,6 +87,7 @@ export const rewardedAvailable = () => !isNative || rewardLoaded || !!AdMob;
 
 // Retorna true se o jogador ganhou a recompensa
 export async function showRewarded() {
+  if (disabled) return true; // sem anúncios: recompensa liberada direto
   if (!AdMob) return mockFullscreen('ANUNCIO RECOMPENSADO (TESTE)', 4, true);
   if (!rewardLoaded) { await preloadRewarded(); if (!rewardLoaded) return false; }
   try {
